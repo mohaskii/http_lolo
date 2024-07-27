@@ -1,0 +1,12 @@
+[package]
+name = "http_lolo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+json = "0.12.4"
+libc = "0.2"
+rand = { version = "0.7.3", default-features = false, features = ["std"] }
+lazy_static = "1.4"
+httparse = "1.9.4"
+multipart = "0.18.0"
