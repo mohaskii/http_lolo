@@ -7,12 +7,12 @@ pub use http_status::*;
 pub use json::*;
 use lazy_static::lazy_static;
 use std::os::unix::io::AsRawFd;
-mod request;
-use request::*;
+pub mod request;
+pub use request::Request;
 mod utils;
 use utils::*;
-mod response_writer;
-use response_writer::*;
+pub mod response_writer;
+pub use response_writer::ResponseWriter;
 
 macro_rules! syscall {
     ($fn: ident ( $($arg: expr),* $(,)* ) ) => {{
@@ -73,9 +73,8 @@ impl HttpServer {
                 match SERVER_CTX.lock().unwrap().get(&(ev.u64 as usize)) {
                     Some((listerner, listener_fd)) => {
                         match listerner.accept() {
-                            Ok((stream, addr)) => {
+                            Ok((stream, _)) => {
                                 stream.set_nonblocking(true).unwrap();
-                                println!("new client on server {}: {}", ev.u64 as usize, addr);
                                 let mut request_contexts = REQUEST_CTX.lock().unwrap();
                                 let key = SERVER_ID.lock().unwrap().clone();
                                 add_interest(
@@ -133,7 +132,6 @@ impl HttpServer {
     }
 
     pub fn listen_on(&self, addr: &str) {
-        // let epoll_fd = epoll_create().expect("can create epoll queue");
         let listener = TcpListener::bind(addr).unwrap();
         listener.set_nonblocking(true).expect("nonblocking works");
         let listener_fd = listener.as_raw_fd();

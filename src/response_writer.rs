@@ -1,12 +1,12 @@
+pub use http_status::*;
+pub use json::*;
 use std::collections::HashMap;
 use std::io::{self, Write};
 use std::net::TcpStream;
 use std::path::Path;
 use std::{fs, str};
-pub use http_status::*;
-pub use json::*;
 
-use crate::{close, http_status, remove_interest, EventId, EPOLL_FD, WRITE_CTX};
+use crate::{ http_status, remove_interest, EventId, EPOLL_FD, WRITE_CTX};
 #[derive(Debug)]
 pub struct ResponseWriter {
     event_id: EventId,
@@ -36,7 +36,7 @@ impl ResponseWriter {
             Ok(())
         } else {
             self.set_status(404);
-            self.write_string("File not found".to_string());
+            self.write_string("File not found");
             Err(io::Error::new(io::ErrorKind::NotFound, "File not found"))
         }
     }
@@ -49,10 +49,10 @@ impl ResponseWriter {
             event_id: self.event_id.clone(),
         }
     }
-    pub fn write_string(&mut self, str: String) {
+    pub fn write_string(&mut self, str: &str) {
         self.body.extend_from_slice(str.as_bytes());
         self.write()
-    }
+    }   
 
     pub fn set_headers(&mut self, object: JsonValue) {
         for (key, value) in object.entries() {
@@ -82,15 +82,11 @@ impl ResponseWriter {
         let mut response_extended = response.as_bytes().to_vec();
         response_extended.extend_from_slice(&self.body);
 
-        match self.stream.write_all(response_extended.as_slice()) {
-            Ok(_) => println!("answered from request {:?}", og_raw_fd),
-            Err(e) => eprintln!("could not answer to request {}, {}", self.event_id, e),
-        };
+        self.stream.write_all(response_extended.as_slice()).unwrap();
 
         let _ = self.stream.shutdown(std::net::Shutdown::Both);
 
         remove_interest(*EPOLL_FD, og_raw_fd).unwrap();
-        close(og_raw_fd);
     }
     pub fn set_cookie(&mut self, name: &str, value: &str) {
         self.headers

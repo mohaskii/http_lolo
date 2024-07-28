@@ -38,9 +38,7 @@ pub fn listener_write_event(key: u64) -> libc::epoll_event {
     }
 }
 
-pub fn close(fd: RawFd) {
-    let _ = syscall!(close(fd));
-}
+
 
 pub fn add_interest(epoll_fd: RawFd, fd: RawFd, mut event: libc::epoll_event) -> io::Result<()> {
     syscall!(epoll_ctl(epoll_fd, libc::EPOLL_CTL_ADD, fd, &mut event))?;
