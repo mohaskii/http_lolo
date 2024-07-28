@@ -1,6 +1,6 @@
 # http_lolo
 ## Overview
-A simple, lightweight, single-threaded HTTP server with non-blocking I/O for concurrent operation handling.
+A simple, lightweight, single-threaded HTTP rust framework with non-blocking I/O for concurrent operation handling.
 
 ## Features
 
