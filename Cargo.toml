@@ -2,6 +2,12 @@
 name = "http_lolo"
 version = "0.1.0"
 edition = "2021"
+authors = ["Mohaskii uha22211@email.com"]
+description = "A simple, lightweight, single-threaded HTTP server with non-blocking I/O for concurrent operation handling"
+license = "MIT"
+repository = "https://github.com/mohaskii/http_lolo"
+keywords = ["http", "server", "web"]
+categories = ["web-programming::http-server"]
 
 [dependencies]
 json = "0.12.4"
